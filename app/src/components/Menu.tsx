@@ -34,13 +34,13 @@ const Menu: React.FC = () => {
                     <i className="fa-solid fa-list fs-4 me-lg-4"></i>
                     <span className="fs-4 d-none d-xl-inline">List</span>
                 </div>
-                <div className="my-3">
+                <div className="my-3 text-muted-opacity">
                     <i className="fa-solid fa-user fs-4 me-lg-4"></i>
                     <span className="fs-4 d-none d-xl-inline">Profile</span>
                 </div>
 
                 <div className="profile_icon position-absolute">
-                    <img src="https://placekitten.com/40/40" className="img-fluid rounded-circle"/>
+                    <img src="https://source.unsplash.com/random/40x40" className="img-fluid rounded-circle"/>
                 </div>
             </div>
         </div>
