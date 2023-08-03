@@ -1,0 +1,17 @@
+.left_nav_section {
+  height: 100vh;
+  top: 0px;
+}
+.profile_icon {
+  bottom: 20px;
+}
+
+.happening_box {
+  background-color: rgb(247, 249, 249);
+  border-radius: 20px;
+}
+
+.text-muted-opacity {
+  color: #6c757d !important; /* This is the color for text-muted in Bootstrap */
+  opacity: 0.5; /* Adjust to your liking, the lower the value, the more transparent the item will be */
+}
