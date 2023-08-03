@@ -2,11 +2,14 @@ import { ethers, Interface, BrowserProvider } from 'ethers'
 import SocialConnectionsAbi from './SocialConnectionsAbi.json'
 import ForwarderAbi from './Forwarder.json'
 import { MethodData, ProviderInfo } from './interfaces'
+import { MetaMaskSDK } from '@metamask/sdk'
 
 const SCAddress = process.env.REACT_APP_SOCIAL_CONNECTIONS_ADDRESS
 const ForwarderAddress = process.env.REACT_APP_FORWARDER_ADDRESS
 const relayUrl = process.env.REACT_APP_RELAY_URL
 const networkName = process.env.REACT_APP_NETWORK_NAME
+
+let MMSDK: MetaMaskSDK
 
 if (!SCAddress) {
     throw new Error('REACT_APP_SOCIAL_CONNECTIONS_ADDRESS is not defined')
@@ -74,30 +77,39 @@ function getFutureTimestamp(hours = 24): number {
 }
 
 /**
- * Checks that Metamask is available
- */
-export const isMetamaskAvailable = (): boolean => // @ts-ignore
-    typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask
-
-/**
  * Gets Metamask instance
  */
-export const getMetamaskInstance = () => {
-    if (!isMetamaskAvailable()) {
-        throw new Error('Please install and unlock Metamask to use this feature.')
+export const getMetamaskInstance = async () => {
+    const options = {
+        checkInstallationImmediately: true,
+        checkInstallationOnAllCalls: true,
+        dappMetadata: {
+            name: 'Web3 Social Network',
+        }
     }
 
-    // @ts-ignore
-    return window.ethereum
+    if (MMSDK) {
+        return MMSDK.getProvider()
+    } else {
+        MMSDK = new MetaMaskSDK(options)
+
+        if (!MMSDK.isInitialized()) {
+            await MMSDK.init()
+        }
+
+        return MMSDK.getProvider()
+    }
 }
 
 /**
  * Gets an active address of Metamask
  */
 export const getAddress = async (): Promise<string> => {
-    const accounts = await getMetamaskInstance().request({
+    const accounts = (await (await getMetamaskInstance()).request({
         method: 'eth_requestAccounts',
-    })
+        params: []
+    })) as string[]
+
     if (accounts && accounts.length) {
         return accounts[0]
     } else {
@@ -140,13 +152,25 @@ export async function signData(provider: ethers.BrowserProvider, params: Array<a
  * @param body Request body
  */
 export async function postData(body: string): Promise<unknown> {
-    return (await fetch(relayUrl!, {
+    const data = await (await fetch(relayUrl!, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body
-    })).json
+    })).json()
+
+    if (data.status === 'error') {
+        throw new Error(data.message)
+    }
+
+    return data
 }
 
+/**
+ * Gets a data for the specified method
+ *
+ * @param methodName Method name
+ * @param params Method parameters
+ */
 export async function getMethodDataToSign(methodName: string, params: unknown): Promise<MethodData> {
     const {from, provider} = await getProviderInfo()
     const forwarder = new ethers.Contract(ForwarderAddress!, ForwarderAbi, provider)
@@ -173,6 +197,12 @@ export async function getMethodDataToSign(methodName: string, params: unknown): 
     }
 }
 
+/**
+ * Gets a signed body for the specified method
+ *
+ * @param methodName Method name
+ * @param params Method parameters
+ */
 export async function getSignedBody(methodName: string, params: unknown) {
     const {from, provider, request, data} = await getMethodDataToSign(methodName, params)
     // Directly call the JSON RPC interface, since ethers does not support signTypedDataV4 yet

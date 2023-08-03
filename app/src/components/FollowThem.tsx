@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import Joyride, { STATUS } from 'react-joyride'
+import { follow } from '../SocialConnections/client'
+import { followAddresses } from '../data'
 
 const FollowThem: React.FC = () => {
     const [runTutorial, setRunTutorial] = useState(false)
+    const [inProgress, setInProgress] = useState(false)
 
     const joyrideSteps = [
         {
@@ -17,7 +20,6 @@ const FollowThem: React.FC = () => {
         const {status} = data
         if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
             // Need to set our running state to false, so we can restart if we click start again.
-            console.log('Tutorial finished')
         }
     }
 
@@ -31,9 +33,6 @@ const FollowThem: React.FC = () => {
                 callback={handleJoyrideCallback}
                 steps={joyrideSteps}
                 run={runTutorial}
-                // continuous={true}
-                // showProgress={true}
-                // showSkipButton={true}
                 scrollToFirstStep={true}
                 styles={{
                     options: {
@@ -63,7 +62,27 @@ const FollowThem: React.FC = () => {
                         </div>
                     ))}
                 </div>
-                <button className="btn btn-outline-success btn-lg w-100 mt-2">Follow</button>
+
+                {inProgress && <div className="d-flex justify-content-center">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Sending gasless transaction...</span>
+                    </div>
+                </div>}
+
+                {!inProgress && <button className="btn btn-outline-success btn-lg w-100 mt-2" disabled={inProgress}
+                                        onClick={async () => {
+                                            setInProgress(true)
+                                            try {
+                                                await follow(followAddresses)
+                                            } catch (e) {
+                                                console.log('Follow error', e)
+                                                alert(`Error during follow process: ${(e as Error).message}`)
+                                            } finally {
+                                                setInProgress(false)
+                                            }
+                                        }}>
+                    Follow
+                </button>}
             </div>
         </>
     )

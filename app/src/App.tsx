@@ -1,13 +1,26 @@
-import React from 'react';
+import React from 'react'
 import Main from './components/Main'
+import CreateAccount from './components/CreateAccount'
+
+export enum AppStatus {
+    CreatingAccount = 'creating_account',
+    LoggedIn = 'logged_in',
+}
 
 /**
  * App component
  */
 const App: React.FC = () => {
+    const [status, setStatus] = React.useState<string>(AppStatus.CreatingAccount)
     return (
-        <><Main/></>
-    );
-};
+        <>
+            {status === AppStatus.CreatingAccount && <CreateAccount onLogin={() => {
+                setStatus(AppStatus.LoggedIn)
+            }}/>}
 
-export default App;
+            {status === AppStatus.LoggedIn && <Main/>}
+        </>
+    )
+}
+
+export default App
