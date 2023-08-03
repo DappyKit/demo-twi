@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react'
 import Joyride, { STATUS } from 'react-joyride'
 import { follow } from '../SocialConnections/client'
 import { followAddresses } from '../data'
+import { ProviderStatus, useStatus } from '../provider/StatusProvider'
 
 const FollowThem: React.FC = () => {
     const [runTutorial, setRunTutorial] = useState(false)
     const [inProgress, setInProgress] = useState(false)
+    const { setStatus } = useStatus();
 
     const joyrideSteps = [
         {
@@ -74,6 +76,7 @@ const FollowThem: React.FC = () => {
                                             setInProgress(true)
                                             try {
                                                 await follow(followAddresses)
+                                                setStatus(ProviderStatus.Followed)
                                             } catch (e) {
                                                 console.log('Follow error', e)
                                                 alert(`Error during follow process: ${(e as Error).message}`)
