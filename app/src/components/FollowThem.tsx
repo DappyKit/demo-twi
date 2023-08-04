@@ -7,7 +7,7 @@ import { ProviderStatus, useStatus } from '../provider/StatusProvider'
 const FollowThem: React.FC = () => {
     const [runTutorial, setRunTutorial] = useState(false)
     const [inProgress, setInProgress] = useState(false)
-    const { setStatus } = useStatus();
+    const {status, setStatus} = useStatus()
 
     const joyrideSteps = [
         {
@@ -29,6 +29,14 @@ const FollowThem: React.FC = () => {
         setRunTutorial(true)
     }, [])
 
+    useEffect(() => {
+        if (status === ProviderStatus.Followed) {
+            setRunTutorial(false)
+        }
+    }, [status])
+
+    const isFollowed = status === ProviderStatus.Followed
+
     return (
         <>
             <Joyride
@@ -45,7 +53,7 @@ const FollowThem: React.FC = () => {
 
             <div className="happening_box mt-5 p-3">
                 <div>
-                    <h3 className="fs-3">Follow them all</h3>
+                    <h3 className="fs-3">{isFollowed ? 'You following them' : 'Follow them all'}</h3>
                 </div>
 
                 <div className="row">
@@ -71,21 +79,26 @@ const FollowThem: React.FC = () => {
                     </div>
                 </div>}
 
-                {!inProgress && <button className="btn btn-outline-success btn-lg w-100 mt-2" disabled={inProgress}
-                                        onClick={async () => {
-                                            setInProgress(true)
-                                            try {
-                                                await follow(followAddresses)
-                                                setStatus(ProviderStatus.Followed)
-                                            } catch (e) {
-                                                console.log('Follow error', e)
-                                                alert(`Error during follow process: ${(e as Error).message}`)
-                                            } finally {
-                                                setInProgress(false)
-                                            }
-                                        }}>
-                    Follow
-                </button>}
+                {!(inProgress || isFollowed) &&
+                    <button className="btn btn-outline-success btn-lg w-100 mt-2" disabled={inProgress || isFollowed}
+                            onClick={async () => {
+                                setInProgress(true)
+                                try {
+                                    await follow(followAddresses, () => {
+                                        setTimeout(() => {
+                                            setStatus(ProviderStatus.Followed)
+                                            setInProgress(false)
+                                        }, 1500)
+                                    })
+                                } catch (e) {
+                                    console.log('Follow error', e)
+                                    alert(`Error during follow process: ${(e as Error).message}`)
+                                } finally {
+                                    setInProgress(false)
+                                }
+                            }}>
+                        Follow
+                    </button>}
             </div>
         </>
     )

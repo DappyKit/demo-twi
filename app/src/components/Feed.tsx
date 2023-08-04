@@ -2,10 +2,28 @@ import React, { useState, useEffect } from 'react'
 import Tweet from './Tweet'
 import { interleavePosts, PostData, posts, publicKeys } from '../data'
 import { ProviderStatus, useStatus } from '../provider/StatusProvider'
+import { getUser } from '../SocialConnections/client'
 
 const Feed: React.FC = () => {
     const [items, setItems] = useState<PostData[]>([])
-    const {status} = useStatus()
+    const {status, address, setStatus} = useStatus()
+
+    useEffect(() => {
+        async function run() {
+            if (!address) {
+                return
+            }
+
+            if (status !== ProviderStatus.Followed) {
+                const userInfo = await getUser(address)
+                if (userInfo?.following?.length > 0) {
+                    setStatus(ProviderStatus.Followed)
+                }
+            }
+        }
+
+        run()
+    }, [status, address, setStatus])
 
     useEffect(() => {
         if (status === ProviderStatus.Followed) {

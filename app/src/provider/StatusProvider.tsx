@@ -8,6 +8,8 @@ export enum ProviderStatus {
 interface StatusContextProps {
     status: string;
     setStatus: React.Dispatch<React.SetStateAction<string>>;
+    address: string;
+    setAddress: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const StatusContext = createContext<StatusContextProps | undefined>(undefined);
@@ -18,9 +20,10 @@ interface StatusProviderProps {
 
 export const StatusProvider: React.FC<StatusProviderProps> = ({ children }) => {
     const [status, setStatus] = useState<string>(ProviderStatus.NotFollowing);
+    const [address, setAddress] = useState<string>(ProviderStatus.NotFollowing);
 
     return (
-        <StatusContext.Provider value={{ status, setStatus }}>
+        <StatusContext.Provider value={{ status, setStatus, address, setAddress }}>
             {children}
         </StatusContext.Provider>
     );

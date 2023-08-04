@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { getAddress, getMetamaskInstance } from '../SocialConnections/client'
 
 export interface CreateAccountProps {
-    onLogin: () => void
+    onLogin: (address: string) => void
 }
 
 const CreateAccount: React.FC<CreateAccountProps> = ({onLogin}) => {
@@ -15,15 +15,23 @@ const CreateAccount: React.FC<CreateAccountProps> = ({onLogin}) => {
         }, 3000)
         try {
             const instance = await getMetamaskInstance()
-            if (instance.isConnected()){
+            if (instance.isConnected()) {
                 const address = await getAddress()
-                onLogin && onLogin()
+                onLogin && onLogin(address)
             }
         } catch (e) {
             console.log('Metamask login error', e)
         } finally {
             setIsProgress(false)
         }
+
+        setTimeout(async () => {
+            try {
+                const address = await getAddress()
+                address && onLogin && onLogin(address)
+            } catch (e) {
+            }
+        }, 300)
     }
 
     const onFastAccountClick = () => {
@@ -33,13 +41,13 @@ const CreateAccount: React.FC<CreateAccountProps> = ({onLogin}) => {
 
     useEffect(() => {
         window?.ethereum?.on('accountsChanged', data => {
-            console.log('accountsChanged', data)
             // @ts-ignore
             if (!(data && data.length > 0)) {
                 return
             }
 
-            onLogin && onLogin()
+            // @ts-ignore
+            onLogin && onLogin(data[0])
         })
     }, [])
 
@@ -47,7 +55,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({onLogin}) => {
         <div className="vh-100 d-flex align-items-center justify-content-center bg-light">
             <div className="col-12 col-sm-8 col-md-4 col-lg-3 mx-auto text-center">
                 <p className="fs-4 mb-4 p-sm-5 p-md-1">
-                    To enter, you should use Metamask to login with your existing account or create a Fast Account.
+                    To enter, use Metamask to login with your existing account or create a Fast Account.
                 </p>
 
                 {isProgress && <div className="spinner-border text-primary" role="status">

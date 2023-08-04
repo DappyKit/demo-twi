@@ -69,3 +69,9 @@ export interface MethodData {
      */
     data: string;
 }
+
+export interface UserInfo {
+    following: string[]
+    followers: string[]
+    nonce: number
+}

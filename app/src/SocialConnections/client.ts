@@ -1,7 +1,7 @@
-import { ethers, Interface, BrowserProvider } from 'ethers'
+import { BrowserProvider, ethers, Interface } from 'ethers'
 import SocialConnectionsAbi from './SocialConnectionsAbi.json'
 import ForwarderAbi from './Forwarder.json'
-import { MethodData, ProviderInfo } from './interfaces'
+import { MethodData, ProviderInfo, UserInfo } from './interfaces'
 import { MetaMaskSDK } from '@metamask/sdk'
 
 const SCAddress = process.env.REACT_APP_SOCIAL_CONNECTIONS_ADDRESS
@@ -183,7 +183,8 @@ export async function getMethodDataToSign(methodName: string, params: unknown): 
         from,
         to: SCAddress!,
         value: 0,
-        gas: 1e6,
+        // todo calculate dynamically
+        gas: 1e6 * 2,
         nonce,
         validUntilTime: getFutureTimestamp(),
         data,
@@ -215,7 +216,24 @@ export async function getSignedBody(methodName: string, params: unknown) {
  * Follows specified addresses
  *
  * @param addresses Addresses to follow
+ * @param onAfterSign Callback after signing
  */
-export async function follow(addresses: string[]): Promise<any> {
-    return postData(await getSignedBody('follow', addresses))
+export async function follow(addresses: string[], onAfterSign?: () => void): Promise<any> {
+    const data = await getSignedBody('follow', addresses)
+    onAfterSign && onAfterSign()
+
+    return postData(data)
 }
+
+/**
+ * Gets user info by address
+ *
+ * @param address User address
+ */
+export async function getUser(address: string): Promise<UserInfo> {
+    const {provider} = await getProviderInfo()
+    const scContract = new ethers.Contract(SCAddress!, SocialConnectionsAbi, provider)
+
+    return await scContract.getUser(address)
+}
+
