@@ -50,6 +50,6 @@ Check out the attached Meme Wallet image at the top of the page. Looks cool, rig
 
 Oh, and did we mention it's on one of the EVM blockchains? Guess which one! Here's a little hint: it's not Ethereum. 😉
 
-You can check out the wallet's balance right here: 0xeaD5A060A22aD612E8fda89F836A37D223e2ee3f
+You can check out the wallet's balance right here: 0xeaD5A060A22aD612E8fda89F836A37D223e2ee3f. Password for the wallet is 111111.
 
 So what are you waiting for? Get your code cracking and claim your prize! After all, who doesn't like a little crypto treasure hunt? 🕵️‍♀️💰
