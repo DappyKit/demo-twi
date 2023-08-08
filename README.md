@@ -2,7 +2,12 @@
 
 Welcome to the Twi Social Network, the meme-tastic, crypto-charged, censorship-resistant social platform that's all about freedom, fun, and the mighty power of Web3!
 
-## [Demo](https://twi.dappykit.org/). Linea Goerly only.
+## Demo
+
+Website Demo: https://twi.dappykit.org/
+
+Linea Goerli smart contract: https://explorer.goerli.linea.build/address/0xB174817cc2619a2829e59EE12B0666647C29c855/read-contract#address-tabs.
+(here, you can verify that you've truly subscribed without using any gas)
 
 ![Example of Meme Wallet](img/meme-wallet-example.jpg)
 
