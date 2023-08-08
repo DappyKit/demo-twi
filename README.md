@@ -43,11 +43,32 @@ Twi also uses a decentralized file system gateway. This gateway provides a publi
 
 `SocialConnections.sol`, a smart contract that's all about letting you manage your social connections in a decentralized way. But that's not the best part. We've got Ethereum's EVM in one hand and the OpenGSN package in the other, making gasless transactions a reality. Yep, no more worrying about the price of gas when following your bestie! 🚗💨
 
-## Try it Out! 👩‍💻
+Sure, here's the "How to Run the Project" section, written in markdown format:
 
-Now, let's get one thing straight. Twi is a demo of a social network, not a real one. It's built on top of users' data that's uploaded to the public file system. But don't let that stop you! Give it a go, have a play, and see the future of social media in action.
+## How to Run the Project 🏃‍♀️
 
-So, ready to dive in? Follow our handy installation guide, set everything up, and you're good to go. Welcome to Twi, where the Web3 revolution is just a meme away!
+Want to see the magic happen on your local machine? Just follow these steps:
+
+1. **Clone the repo**: Run `git clone https://github.com/DappyKit/demo-twi.git` in your terminal to get your own copy of our code.
+
+2. **Navigate to the app**: Use the command `cd app` to enter the main app directory.
+
+3. **Install the dependencies**: Run `npm ci` to install all the necessary bits and bobs that our app needs to function.
+
+4. **Set up your environment**: Copy the example environment file with `cp example.env .env`. This will create a new file where you can store all your secret keys and settings.
+
+5. **Replace in your .env file**: Replace the following lines to your new .env file:
+    ```
+    REACT_APP_RELAY_URL=https://api.defender.openzeppelin.com/autotasks/f31e2140-89e1-4c85-95c6-8fd26b1bb985/runs/webhook/02d6ee21-bc63-415d-9ff6-b21ce038659c/QqJQSQyxeZ6P5CzKDDcc76
+    REACT_APP_PROVIDER_URL=https://linea-goerli.infura.io/v3/YOUR_KEY
+    REACT_APP_CHAIN_ID=59140
+    REACT_APP_NETWORK_NAME="Linea Goerli"
+    ```
+   Don't forget to replace `YOUR_KEY` with your own Infura key!
+
+6. **Start the party**: Finally, run `npm run start` to launch the app. It's showtime! 🎉
+
+And that's it! You've just set up the Twi demo on your local machine. Have fun exploring!
 
 ## Grab the Wallet, Get the Prize! 🎁
 
