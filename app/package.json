@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@dappykit/meme-wallet": "^1.1.0",
     "@metamask/sdk": "^0.5.6",
     "@openzeppelin/defender-relay-client": "^1.47.1",
     "@testing-library/jest-dom": "^5.17.0",
@@ -13,8 +14,10 @@
     "@types/react": "^18.2.17",
     "@types/react-dom": "^18.2.7",
     "bootstrap": "^5.3.1",
+    "bootstrap-icons": "^1.10.5",
     "ethers": "^6.6.7",
     "react": "^18.2.0",
+    "react-bootstrap": "^2.8.0",
     "react-dom": "^18.2.0",
     "react-joyride": "^2.5.5",
     "react-scripts": "5.0.1",

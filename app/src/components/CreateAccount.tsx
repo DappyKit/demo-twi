@@ -1,12 +1,18 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { getAddress, getMetamaskInstance } from '../SocialConnections/client'
+import { MemeAccountModal } from './modal/MemeAccountModal'
+import { HDNodeWallet, Wallet } from 'ethers'
 
 export interface CreateAccountProps {
-    onLogin: (address: string) => void
+    onLogin: (address: string | Wallet | HDNodeWallet) => void
 }
 
 const CreateAccount: React.FC<CreateAccountProps> = ({onLogin}) => {
     const [isProgress, setIsProgress] = React.useState<boolean>(false)
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     const onMetamaskClick = async () => {
         setIsProgress(true)
@@ -35,8 +41,9 @@ const CreateAccount: React.FC<CreateAccountProps> = ({onLogin}) => {
     }
 
     const onFastAccountClick = () => {
-        setIsProgress(true)
-        console.log('Fast Account clicked')
+        // setIsProgress(true)
+        // console.log('Fast Account clicked')
+        handleShow()
     }
 
     useEffect(() => {
@@ -55,7 +62,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({onLogin}) => {
         <div className="vh-100 d-flex align-items-center justify-content-center bg-light">
             <div className="col-12 col-sm-8 col-md-4 col-lg-3 mx-auto text-center">
                 <p className="fs-4 mb-4 p-sm-5 p-md-1">
-                    To enter, use Metamask to login with your existing account or create a Fast Account.
+                    To enter, use Metamask to login with your existing account or create a Fast Meme Account.
                 </p>
 
                 {isProgress && <div className="spinner-border text-primary" role="status">
@@ -72,11 +79,13 @@ const CreateAccount: React.FC<CreateAccountProps> = ({onLogin}) => {
                     <div className="row px-3 px-sm-0">
                         <button className="btn btn-outline-primary btn-lg w-100" onClick={onFastAccountClick}
                                 disabled={isProgress}>
-                            🚀 Fast Account
+                            🚀 Meme Account
                         </button>
                     </div>
                 </>}
             </div>
+
+            <MemeAccountModal show={show} handleClose={handleClose} onLogin={onLogin} />
         </div>
     )
 }

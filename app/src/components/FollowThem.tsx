@@ -3,105 +3,106 @@ import Joyride, { STATUS } from 'react-joyride'
 import { follow } from '../SocialConnections/client'
 import { followAddresses } from '../data'
 import { ProviderStatus, useStatus } from '../provider/StatusProvider'
+import { HDNodeWallet, Wallet } from 'ethers'
 
 const FollowThem: React.FC = () => {
-    const [runTutorial, setRunTutorial] = useState(false)
-    const [inProgress, setInProgress] = useState(false)
-    const {status, setStatus} = useStatus()
+  const [runTutorial, setRunTutorial] = useState(false)
+  const [inProgress, setInProgress] = useState(false)
+  const {address, status, wallet, setStatus, web3Provider} = useStatus()
 
-    const joyrideSteps = [
-        {
-            disableBeacon: true,
-            target: '.happening_box',
-            content: '💫 Click this button to send a 🚀 gasless transaction and connect with all of these people. After subscribing, you will be able to see all their updates.\n',
-            placement: 'top' as const
-        }
-    ]
-
-    const handleJoyrideCallback = (data: any) => {
-        const {status} = data
-        if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
-            // Need to set our running state to false, so we can restart if we click start again.
-        }
+  const joyrideSteps = [
+    {
+      disableBeacon: true,
+      target: '.happening_box',
+      content: '💫 Click this button to send a 🚀 gasless transaction and connect with all of these people. After subscribing, you will be able to see all their updates.\n',
+      placement: 'top' as const
     }
+  ]
 
-    useEffect(() => {
-        setRunTutorial(true)
-    }, [])
+  const handleJoyrideCallback = (data: any) => {
+    const {status} = data
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+      // Need to set our running state to false, so we can restart if we click start again.
+    }
+  }
 
-    useEffect(() => {
-        if (status === ProviderStatus.Followed) {
-            setRunTutorial(false)
-        }
-    }, [status])
+  useEffect(() => {
+    setRunTutorial(true)
+  }, [])
 
-    const isFollowed = status === ProviderStatus.Followed
+  useEffect(() => {
+    if (status === ProviderStatus.Followed) {
+      setRunTutorial(false)
+    }
+  }, [status])
 
-    return (
-        <>
-            <Joyride
-                callback={handleJoyrideCallback}
-                steps={joyrideSteps}
-                run={runTutorial}
-                scrollToFirstStep={true}
-                styles={{
-                    options: {
-                        zIndex: 10000,
-                    }
-                }}
-            />
+  const isFollowed = status === ProviderStatus.Followed
 
-            <div className="happening_box mt-5 p-3">
-                <div>
-                    <h3 className="fs-3">{isFollowed ? 'You following them' : 'Follow them all'}</h3>
+  return (
+      <>
+        <Joyride
+            callback={handleJoyrideCallback}
+            steps={joyrideSteps}
+            run={runTutorial}
+            scrollToFirstStep={true}
+            styles={{
+              options: {
+                zIndex: 10000,
+              }
+            }}
+        />
+
+        <div className="happening_box mt-5 p-3">
+          <div>
+            <h3 className="fs-3">{isFollowed ? 'You following them' : 'Follow them all'}</h3>
+          </div>
+
+          <div className="row">
+            {[...Array(9)].map((_, i) => (
+                <div className="col-4 my-2 d-flex justify-content-center" key={i}>
+                  <div
+                      className="bg-secondary rounded-circle d-flex align-items-center justify-content-center"
+                      style={{width: '100%', paddingTop: '100%', position: 'relative'}}>
+                    <img
+                        src={`https://source.unsplash.com/random/150x150?sig=${i}`}
+                        className="img-fluid rounded-circle position-absolute top-0 start-0"
+                        alt="Avatar"
+                        style={{objectFit: 'cover'}}
+                    />
+                  </div>
                 </div>
+            ))}
+          </div>
 
-                <div className="row">
-                    {[...Array(9)].map((_, i) => (
-                        <div className="col-4 my-2 d-flex justify-content-center" key={i}>
-                            <div
-                                className="bg-secondary rounded-circle d-flex align-items-center justify-content-center"
-                                style={{width: '100%', paddingTop: '100%', position: 'relative'}}>
-                                <img
-                                    src={`https://source.unsplash.com/random/150x150?sig=${i}`}
-                                    className="img-fluid rounded-circle position-absolute top-0 start-0"
-                                    alt="Avatar"
-                                    style={{objectFit: 'cover'}}
-                                />
-                            </div>
-                        </div>
-                    ))}
-                </div>
+          {inProgress && <div className="d-flex justify-content-center">
+              <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Sending gasless transaction...</span>
+              </div>
+          </div>}
 
-                {inProgress && <div className="d-flex justify-content-center">
-                    <div className="spinner-border text-primary" role="status">
-                        <span className="visually-hidden">Sending gasless transaction...</span>
-                    </div>
-                </div>}
-
-                {!(inProgress || isFollowed) &&
-                    <button className="btn btn-outline-success btn-lg w-100 mt-2" disabled={inProgress || isFollowed}
-                            onClick={async () => {
-                                setInProgress(true)
-                                try {
-                                    await follow(followAddresses, () => {
-                                        setTimeout(() => {
-                                            setStatus(ProviderStatus.Followed)
-                                            setInProgress(false)
-                                        }, 1500)
-                                    })
-                                } catch (e) {
-                                    console.log('Follow error', e)
-                                    alert(`Error during follow process: ${(e as Error).message}`)
-                                } finally {
-                                    setInProgress(false)
-                                }
-                            }}>
-                        Follow
-                    </button>}
-            </div>
-        </>
-    )
+          {!(inProgress || isFollowed) &&
+              <button className="btn btn-outline-success btn-lg w-100 mt-2" disabled={inProgress || isFollowed}
+                      onClick={async () => {
+                        setInProgress(true)
+                        try {
+                          await follow(wallet ? wallet! as HDNodeWallet : web3Provider!, followAddresses, address, () => {
+                            setTimeout(() => {
+                              setStatus(ProviderStatus.Followed)
+                              setInProgress(false)
+                            }, 1500)
+                          })
+                        } catch (e) {
+                          console.log('Follow error', e)
+                          alert(`Error during follow process: ${(e as Error).message}`)
+                        } finally {
+                          setInProgress(false)
+                        }
+                      }}>
+                  Follow
+              </button>}
+        </div>
+      </>
+  )
 }
 
 export default FollowThem

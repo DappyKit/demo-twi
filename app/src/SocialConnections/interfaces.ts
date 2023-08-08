@@ -57,10 +57,6 @@ export interface MethodData {
      */
     from: string;
     /**
-     * The provider info
-     */
-    provider: BrowserProvider;
-    /**
      * The transaction request data
      */
     request: TransactionRequest;
