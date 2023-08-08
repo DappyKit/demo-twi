@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@dappykit/meme-wallet": "^1.1.0",
+    "@dappykit/meme-wallet": "^1.2.0",
     "@metamask/sdk": "^0.5.6",
     "@openzeppelin/defender-relay-client": "^1.47.1",
     "@testing-library/jest-dom": "^5.17.0",
