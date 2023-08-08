@@ -224,7 +224,8 @@ export function MemeAccountModal({show, handleClose, onLogin}: MemeAccountModalP
                   <img src={arrowLeft} alt="back" style={{width: '20px', height: '20px', borderRadius: '50%'}}/>
                 </Button>
 
-                <p>Whoa, hold the phone! This image is like your super-important...</p>
+                <p>Hold up! This image is your secret key to your Meme Wallet, so guard it like a treasure. Don't share
+                  it around. In crypto, your security is top priority! 👑🔒</p>
                 <canvas ref={canvasRef} style={{width: '100%', height: 'auto'}}></canvas>
                 <Button variant="outline-primary" onClick={handleDownloadCreatedCanvas} className="w-100 mb-3">
                   Download
